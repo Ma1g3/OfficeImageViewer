@@ -4,6 +4,8 @@
 
 当前版本（预览） **0.2.1**，增加图形安装、修复和系统卸载入口。采用 C# 5 / .NET Framework 4.8、原生 COM Add-in 和 WPF。
 
+**[下载 Windows 安装器（v0.2.1 预览版）](https://github.com/Ma1g3/OfficeImageViewer/releases/tag/v0.2.1)**
+
 ## 普通用户使用
 
 1. 下载发布文件 `OfficeImageViewer-Setup-0.2.1.exe`，双击打开。
