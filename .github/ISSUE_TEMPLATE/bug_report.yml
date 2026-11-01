@@ -1,0 +1,38 @@
+name: 问题反馈
+description: 报告图片预览、安装或兼容性问题
+body:
+  - type: markdown
+    attributes:
+      value: 请使用合成示例复现，避免提交私人文档、账号、图片和完整个人路径。
+  - type: input
+    id: plugin_version
+    attributes:
+      label: 插件版本
+      placeholder: 例如 0.2.1
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境
+      description: Windows 版本、Word 或 PowerPoint 的完整版本与位数、是否以管理员权限运行、安装范围。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 说明图片格式、嵌入或浮动、触发动作，以及按钮入口是否可用。
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: 预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: 诊断信息（可选）
+      description: 可粘贴 diagnose.ps1 的相关输出。请先隐去用户名、文档标题、账号和个人路径。

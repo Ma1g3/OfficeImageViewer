@@ -1,0 +1,28 @@
+# 构建、发布及本机验证资料
+/bin/
+/obj/
+/dist/
+/work/
+/.local/
+/validation-results/
+
+# IDE 与操作系统文件
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+Thumbs.db
+Desktop.ini
+.DS_Store
+~$*
+
+# 本地配置及签名私钥
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+
