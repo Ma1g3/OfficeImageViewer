@@ -7,8 +7,8 @@ using System.Threading;
 using System.Windows;
 
 [assembly: AssemblyTitle("Office 图片查看器安装程序")]
-[assembly: AssemblyVersion("0.2.1.0")]
-[assembly: AssemblyFileVersion("0.2.1.0")]
+[assembly: AssemblyVersion("0.2.2.0")]
+[assembly: AssemblyFileVersion("0.2.2.0")]
 
 namespace OfficeImageViewer.Setup
 {

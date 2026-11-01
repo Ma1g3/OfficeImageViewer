@@ -38,6 +38,11 @@ public static class HostAdapterTests
         Test("PPT grouped child passes through",delegate{WithPpt(delegate(FakePpt p){p.ActiveWindow.Selection.HasChildShapeRange=-1;using(var a=new PowerPointHostAdapter(p)){CoreTests.Assert(a.TryGetSelectedImage()==null,"group");}CoreTests.Assert(p.ActiveWindow.Presentation.LastPath==null,"no export");});});
         Test("PPT unsupported view passes through",delegate{WithPpt(delegate(FakePpt p){p.ActiveWindow.ViewType=7;using(var a=new PowerPointHostAdapter(p)){CoreTests.Assert(a.TryGetSelectedImage()==null,"view");}});});
         Test("PPT missing image cleans temporary copy",delegate{WithPpt(delegate(FakePpt p){((FakePicture)p.ActiveWindow.Selection.ShapeRange[1]).Id=999;using(var a=new PowerPointHostAdapter(p)){Reject(delegate{a.TryGetSelectedImage();});}Clean(p);});});
+        Test("PPT preview preserves embedded-font save state",delegate{WithPpt(delegate(FakePpt p){var doc=p.ActiveWindow.Presentation;doc.EmbeddedFonts=true;using(var a=new PowerPointHostAdapter(p)){a.TryGetSelectedImage();}CoreTests.Assert(doc.FontArgument==-2&&doc.Saved==-1,"preserve font setting and clean state");Clean(p);});});
+        Test("PPT preview preserves existing unsaved edits",delegate{WithPpt(delegate(FakePpt p){var doc=p.ActiveWindow.Presentation;doc.EmbeddedFonts=true;doc.Saved=0;using(var a=new PowerPointHostAdapter(p)){a.TryGetSelectedImage();}CoreTests.Assert(doc.Saved==0,"real edits must remain dirty");Clean(p);});});
+        Test("PPT export failure preserves saved state and cleans partial copy",delegate{WithPpt(delegate(FakePpt p){var doc=p.ActiveWindow.Presentation;doc.EmbeddedFonts=true;doc.FailExport=true;using(var a=new PowerPointHostAdapter(p)){Reject(delegate{a.TryGetSelectedImage();});}CoreTests.Assert(doc.Saved==-1&&doc.FontArgument==-2,"failed export preserves state");Clean(p);});});
+        Test("PPT parse failure preserves embedded-font save state",delegate{WithPpt(delegate(FakePpt p){var doc=p.ActiveWindow.Presentation;doc.EmbeddedFonts=true;((FakePicture)p.ActiveWindow.Selection.ShapeRange[1]).Id=999;using(var a=new PowerPointHostAdapter(p)){Reject(delegate{a.TryGetSelectedImage();});}CoreTests.Assert(doc.Saved==-1,"parse error must not dirty original");Clean(p);});});
+        Test("PPT failed export does not clear unsaved edits",delegate{WithPpt(delegate(FakePpt p){var doc=p.ActiveWindow.Presentation;doc.EmbeddedFonts=true;doc.Saved=0;doc.FailExport=true;using(var a=new PowerPointHostAdapter(p)){Reject(delegate{a.TryGetSelectedImage();});}CoreTests.Assert(doc.Saved==0,"failed export keeps real edits");Clean(p);});});
         Console.WriteLine("Host adapter tests: "+passed+" passed, "+failed+" failed (simulated Office objects)");
         return failed==0?0:1;
     }
@@ -71,7 +76,14 @@ public class FakePptWindow{public int ViewType=9;public FakePptSelection Selecti
 public class FakePptSelection{public int Type,HasChildShapeRange;public FakeCollection ShapeRange,SlideRange;}
 public class FakeSlide{public int SlideID;}
 public class FakePresentation{
-    public string Name="Test.pptx",Source,LastPath;public int HasVBProject,Format;
-    public void SaveCopyAs(string path,int format,int fonts){LastPath=path;Format=format;File.Copy(Source,path);}
+    public string Name="Test.pptx",Source,LastPath;public int HasVBProject,Format,FontArgument,Saved=-1;
+    public bool EmbeddedFonts,FailExport;
+    public void SaveCopyAs(string path,int format,int fonts){
+        LastPath=path;Format=format;FontArgument=fonts;
+        // Reproduce the real-host side effect without masking existing dirty state.
+        if(EmbeddedFonts&&fonts==0)Saved=0;
+        File.Copy(Source,path);
+        if(FailExport)throw new System.Runtime.InteropServices.COMException("Synthetic export failure");
+    }
 }
 

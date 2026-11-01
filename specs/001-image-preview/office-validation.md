@@ -1,5 +1,5 @@
 # 真实 Office 验收
-状态：0.2.1本机64位Office的正常冷启动、所测双击、帮助、系统卸载和重装通过（AllUsers）。普通用户与完整跨版本/位数矩阵仍待测，详见 [verification.md](verification.md)。本文件供独立电脑复测，不代表所有清单已执行。
+状态：0.2.2本机AllUsers升级、PPT保存状态/双击/按钮/失败路径与Word基础双击通过；系统卸载重装历史覆盖为0.2.1。普通用户与完整跨版本/位数矩阵仍待测，详见 [verification.md](verification.md)。本文件供独立电脑复测，不代表所有清单已执行。
 
 每次执行记录：Windows 版本、Office 产品/版本/构建号/位数、.NET 版本、测试日期、DLL SHA256。首版验收范围为本机 64 位 Office；32 位 Office 真实宿主为后续覆盖项，不以 COM 激活替代。
 
@@ -28,6 +28,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\verify-office.ps1
 - R02：裁剪图片显示存储原图并有裁剪提示。新插入但未保存图片也能打开。
 - R02：文本、组合、图表、多选、放映模式不误触发。
 - R03/R05：检查按钮入口、退出恢复、保存状态、文件哈希及剪贴板。
+- R05 字体嵌入回归：使用自建已保存 PPTX/PPTM，分别启用/不启用字体嵌入，双击及按钮预览后真正从 UI 关闭文稿，确认没有新增保存提示；对已编辑未保存的样本确认仍有提示且编辑保留。成功、失败和重复预览分别记录。不得设置 Saved=true 隐藏提示。
 - R07：打开和关闭 20 次后，%TEMP% 下没有新增 OfficeImageViewer-* 临时目录。PPTM 含宏文档不得弹出丢失宏提示，宏不得执行。
 
 ## 查看器和生命周期
@@ -43,5 +44,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\verify-office.ps1
 | 待填 | 待填 | 未执行 | 待填 |
 
 全部真实宿主项目通过后，更新 verification.md；不得用本文件的存在作为已验证证据。
+
+## 仅真实 COM 适配器的保存状态回归
+
+先关闭现有演示文稿，独立构建后运行以下命令；脚本遇到现有文稿或已有输出目录会拒绝。只创建/关闭自己的合成文稿，不安装 DLL、不修改安全设置、不使用剪贴板。输出必须使用新目录。
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\PptSavedState.ps1 -DllPath .\work\build\OfficeImageViewer.dll -OutputDirectory .\work\ppt-saved-run1
+```
+
+此检查验证真实宿主的 SaveCopyAs 副作用与修复后的适配器读取、原稿哈希、部分图片属性、真实编辑保留及临时目录清理；不显示查看器，不执行鼠标双击，也不验证 UI 保存提示，不能代替上面的完整场景。PPTM 样本为空 VBA 项目，不代表带宏项目覆盖。
 
 

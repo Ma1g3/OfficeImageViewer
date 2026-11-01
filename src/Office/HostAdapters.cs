@@ -163,6 +163,7 @@ namespace OfficeImageViewer
         private const int LinkedPicture = 11;
         private const int OpenXmlPresentation = 24;
         private const int MacroEnabledPresentation = 25;
+        private const int PreserveFontEmbedding = -2; // msoTriStateMixed: SaveCopyAs default.
 
         public PowerPointHostAdapter(object app)
         {
@@ -233,12 +234,13 @@ namespace OfficeImageViewer
                     Directory.CreateDirectory(temporaryDirectory);
                     try
                     {
-                        // SaveCopyAs captures unsaved inserted/replaced images. Unlike SaveAs,
-                        // it does not change the original name, content, or saved flag.
+                        // SaveCopyAs captures unsaved inserted/replaced images. Keep the
+                        // current font embedding setting: forcing msoFalse can dirty the
+                        // original presentation when it was saved with embedded fonts.
                         // Keep VBA in a macro-enabled copy to avoid conversion prompts;
                         // the copy is only parsed as ZIP and is never opened in Office.
                         operation = "SaveCopyAs";
-                        presentation.SaveCopyAs(copyPath, hasMacros ? MacroEnabledPresentation : OpenXmlPresentation, 0);
+                        presentation.SaveCopyAs(copyPath, hasMacros ? MacroEnabledPresentation : OpenXmlPresentation, PreserveFontEmbedding);
                         operation = "ReadPackage";
                         return ImagePackageReader.FromPresentation(copyPath, slideId, shapeId, title);
                     }

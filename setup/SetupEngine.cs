@@ -46,7 +46,7 @@ namespace OfficeImageViewer.Setup
     }
     public sealed class SetupEngine
     {
-        public const string Version = "0.2.1";
+        public const string Version = "0.2.2";
         static readonly string[] Files = { "OfficeImageViewer.dll", "OfficeImageViewer.Setup.exe", "LICENSE", "installation.xml" };
         readonly IProductRegistry registry;
         readonly Func<SetupEnvironment> environment;

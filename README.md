@@ -2,13 +2,15 @@
 
 双击 Word / PowerPoint 中的图片，在独立窗口里放大查看。适用于 Windows 桌面版 Microsoft Office，中文界面，图片在本地处理。
 
-当前版本（预览） **0.2.1**，增加图形安装、修复和系统卸载入口。采用 C# 5 / .NET Framework 4.8、原生 COM Add-in 和 WPF。
+当前版本（预览） **0.2.2**，修复部分 PPT 仅预览图片后关闭提示保存的问题，保留图形安装、修复和系统卸载入口。采用 C# 5 / .NET Framework 4.8、原生 COM Add-in 和 WPF。
 
-**[下载 Windows 安装器（v0.2.1 预览版）](https://github.com/Ma1g3/OfficeImageViewer/releases/tag/v0.2.1)**
+0.2.2 已完成本机 AllUsers 升级、真实 PPT 双击/按钮/保存提示回归及 Word 基础检查。修复与验证范围见 [验证记录](specs/001-image-preview/verification.md)。构建后的安装文件为 `dist/OfficeImageViewer-Setup-0.2.2.exe`。
+
+公开历史版本见 [GitHub Releases](https://github.com/Ma1g3/OfficeImageViewer/releases)。0.2.1 不包含本次修复；0.2.2 当前为本机构建交付，尚未上传发布。
 
 ## 普通用户使用
 
-1. 下载发布文件 `OfficeImageViewer-Setup-0.2.1.exe`，双击打开。
+1. 获取发布文件 `OfficeImageViewer-Setup-0.2.2.exe`，双击打开。
 2. 安装器自动检测 Word / PowerPoint，默认仅为当前用户安装。根据窗口提示保存并关闭正在运行的 Office，再点击“安装”。
 3. 安装成功后重新打开 Word / PPT，双击图片，或点击“图片查看 → 查看图片”。
 
@@ -34,7 +36,7 @@
 
 | 环境或场景 | 状态 |
 | --- | --- |
-| 本机 64 位 Word / PowerPoint | 0.2.1 正常冷启动、所测双击、帮助、系统卸载和重装通过（AllUsers） |
+| 本机 64 位 Word / PowerPoint | 0.2.2 冷启动、PPT 保存状态矩阵及 Word 基础双击通过（AllUsers）；系统卸载/重装历史覆盖见0.2.1记录 |
 | Word 精确图片范围导出缺图 | 0.1.2 已修复，并在复现文档中真实双击验证 |
 | 32 位 Office 真实宿主 | 待测；32 位 COM 激活通过不代表宿主验收 |
 | 普通用户 CurrentUser 加载、多屏跨 DPI、其他 Office 构建 | 待测 |
@@ -51,7 +53,7 @@
 powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1 -Test -Package
 ```
 
-构建入口使用 Windows 自带的 .NET Framework 编译器，无需 .NET SDK 或 NuGet。产物为 `bin/Release/OfficeImageViewer.dll` 与 `OfficeImageViewer.Setup.exe`；图形安装程序发布到 `dist/OfficeImageViewer-Setup-0.2.1.exe`。脚本发布包用于开发和故障处理。
+构建入口使用 Windows 自带的 .NET Framework 编译器，无需 .NET SDK 或 NuGet。产物为 `bin/Release/OfficeImageViewer.dll` 与 `OfficeImageViewer.Setup.exe`；图形安装程序发布到 `dist/OfficeImageViewer-Setup-0.2.2.exe`。脚本发布包用于开发和故障处理。
 
 如果本目录的插件已经安装并被 Office 加载，开发测试请使用独立输出目录，避免覆盖已安装 DLL：
 
@@ -122,7 +124,7 @@ Word 读取所选图片的 Flat OPC 数据；精确范围缺图时，按段落�
 
 ## 测试与参与开发
 
-`build.ps1 -Test` 执行 36 项核心测试、14 项模拟宿主测试、22 项安装引擎检查，以及 12 个 PowerShell 脚本的 BOM / Windows PowerShell 5.1 解析检查。安装引擎检查使用隔离文件系统及模拟注册/环境，不能当作系统安装或真实 Office 验证。查看器独立检查：
+`build.ps1 -Test` 执行 36 项核心测试、19 项模拟宿主测试、22 项安装引擎检查，以及 13 个 PowerShell 脚本的 BOM / Windows PowerShell 5.1 解析检查。安装引擎检查使用隔离文件系统及模拟注册/环境，不能当作系统安装或真实 Office 验证。查看器独立检查：
 
 ```powershell
 .\bin\Release\ViewerHarness.exe --smoke .\work\visual

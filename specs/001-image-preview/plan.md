@@ -1,5 +1,15 @@
 # 实现计划
 
+## PPT 预览污染保存状态修复
+
+交付版本0.2.2：插件与安装器程序集、安装引擎版本保持一致，独立输出后打包相同被测字节。用户已授权完成升级部署；测试仍不覆盖已有安装输出目录，部署通过产品安装引擎执行并保持旧安装范围。记录部署前后哈希和清单、正常冷启动加载版本、真实UI关闭行为；PPT以自建字体嵌入开/关PPTX/PPTM覆盖，另做真实未保存编辑。Word进行基础冒烟，避免共享程序集升级回归。
+
+2026-11-01 自建真实 PPT 对照复现：以 SaveAs(...,24,-1) 保存的字体嵌入样本，调用现有 SaveCopyAs(...,24,0) 后 Saved 从 -1 变成 0；HasVBProject 查询前后保持 -1。相同样本传 -2 或 -1 时 Saved 保持 -1。普通非嵌入字体样本传 0 未复现。因此根因是预览导出硬编码 msoFalse，不能继续假定 SaveCopyAs 的所有参数均无副作用。
+
+PowerPointHostAdapter 导出使用命名常量 msoTriStateMixed=-2，沿用宿主当前字体嵌入设置（SaveCopyAs 文档默认值），保留 PPTX/PPTM 格式选择与 finally 清理。不得写 Presentation.Saved、自动保存原稿或修改全局字体选项。模拟宿主覆盖字体参数、原有 dirty 状态、导出异常、包解析失败；真实 COM 用自建图片文稿逐阶段验证修复前后 Saved、原稿哈希/图片属性及临时文件。关闭提示及真实鼠标双击必须另行记录，不能用适配器调用或模拟结果代替。
+
+参考：https://learn.microsoft.com/en-us/office/vba/api/powerpoint.presentation.savecopyas （EmbedTrueTypeFonts 默认 msoTriStateMixed）；https://learn.microsoft.com/en-us/office/vba/api/powerpoint.presentation.saved （写 true 会使关闭时丢失未保存编辑）。
+
 ## 公开仓库检查
 
 本机诊断资料与旧产物保留在被 Git 忽略的 `.local/` 中，公开文档只保留匿名验证摘要。脚本兼容检查按项目相对路径排除 `.git`、`.local`、`bin`、`obj`、`dist`、`work` 和 `validation-results`，避免扫描本机归档，也避免项目恰好位于同名父目录时漏掉全部源码脚本。PowerShell BOM 与 Windows PowerShell 5.1 解析要求保持不变。
