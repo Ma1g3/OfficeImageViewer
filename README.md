@@ -6,7 +6,7 @@
 
 0.2.2 已完成本机 AllUsers 升级、真实 PPT 双击/按钮/保存提示回归及 Word 基础检查。修复与验证范围见 [验证记录](specs/001-image-preview/verification.md)。构建后的安装文件为 `dist/OfficeImageViewer-Setup-0.2.2.exe`。
 
-公开历史版本见 [GitHub Releases](https://github.com/Ma1g3/OfficeImageViewer/releases)。0.2.1 不包含本次修复；0.2.2 当前为本机构建交付，尚未上传发布。
+**[下载 Windows 安装器（v0.2.2 预览版）](https://github.com/Ma1g3/OfficeImageViewer/releases/tag/v0.2.2)**。0.2.1 不包含本次保存状态修复；历史版本见 [GitHub Releases](https://github.com/Ma1g3/OfficeImageViewer/releases)。
 
 ## 普通用户使用
 
@@ -15,6 +15,8 @@
 3. 安装成功后重新打开 Word / PPT，双击图片，或点击“图片查看 → 查看图片”。
 
 不需要打开 PowerShell、不需要自己选择 DLL 保存目录；下载的安装 EXE 在安装完成后可移走。程序文件由安装器放到固定程序目录。
+
+已安装旧版的电脑：先保存文档并关闭所有 Word / PPT，再运行新版安装器升级，无需先卸载；安装器沿用原有安装范围，原为所有用户安装时需要管理员权限。重新打开 Office，在“图片查看 → 使用帮助与诊断”确认版本 0.2.2。旧版不会自动更新，需要在每台电脑运行一次新版安装器。
 
 修复时再次运行安装 EXE；卸载时打开 **Windows 设置 → 应用 → 已安装的应用 → Office 图片查看器 → 卸载**。Office 内的“图片查看 → 使用帮助与诊断”可查看用法及最近一次预览错误。
 
